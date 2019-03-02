@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block app_content %}
+<p>inversewsb.fund is a simulated actively-managed mutual fund that attempts to buy and sell individual securities based on posts made on <a href="https://www.reddit.com/r/wallstreetbets">r/wallstreetbets</a>, a popular internet forum used to discuss potential stock trades.</p>
+
+<p>using <a href="https://praw.readthedocs.io/en/latest/">PRAW</a> and the <a href="https://www.nltk.org/">NLTK</a>, posts are constantly scraped and analyzed for their sentiment. since it is a widely held belief that simply inverting the trades being discussed can lead to great profits, "bullish" posts that mention a particular security trigger the sale of that security, while "bearish" posts trigger the purchase of said security.</p>
+
+<p><a href="https://alpaca.markets/">Alpaca</a> provides the paper-trading account and API used to intitiate the simulated trades/transactions.</p>
+{% endblock %}
+

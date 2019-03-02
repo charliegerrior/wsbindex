@@ -1,0 +1,10 @@
+env/
+.flaskenv
+.env
+app/__pycache__/*
+__pycache__/*
+app.db*
+logs/*
+dump
+*.pyc
+*.swp

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>${{ mention.symbol }} was mentioned on {{ moment(mention.created_at).format('LLL') }}</h1>
+    <hr>
+    <p>"{{ comment.body }}"</p>
+    <p>autist: <a href="https://www.reddit.com/user/{{ comment.author }}">u/{{ comment.author }}</a></p>
+    <table class="table table-striped">
+        <tr>
+            <th>sentiment</th>
+            <th>overall sentiment</th>
+            <th>r/wallstreetbets</th>
+        </tr>
+        <tr>
+            {% if mention.sentiment >= 0.6 %}
+            <td>very bullish</td>
+            {% elif mention.sentiment >= 0.2 and mention.sentiment < 0.6 %}
+            <td>bullish</td>
+            {% elif mention.sentiment < 0.2 and mention.sentiment > -0.2 %}
+            <td>neutral</td>
+            {% elif mention.sentiment <= -0.2 and mention.sentiment > -0.6 %}
+            <td>bearish</td>
+            {% elif mention.sentiment <= -0.6 %}
+            <td>very bearish</td>
+            {% endif %}
+            {% if mention.avg_sentiment >= 0.6 %}
+            <td>very bullish</td>
+            {% elif mention.avg_sentiment >= 0.2 and mention.avg_sentiment < 0.6 %}
+            <td>bullish</td>
+            {% elif mention.avg_sentiment < 0.2 and mention.avg_sentiment > -0.2 %}
+            <td>neutral</td>
+            {% elif mention.avg_sentiment <= -0.2 and mention.avg_sentiment > -0.6 %}
+            <td>bearish</td>
+            {% elif mention.avg_sentiment <= -0.6 %}
+            <td>very bearish</td>
+            {% endif %}
+            <td><a href="https://www.reddit.com{{ comment.reddit_link }}">link</a></td>
+        </tr>
+    </table>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>Stonk: ${{ holding.symbol }}</h1>
+    <hr>
+    <table class="table table-striped">
+        <tr>
+            <th>shares</th>
+            <th>price</th>
+            <th>avg. entry</th>
+            <th>cost basis</th>
+            <th>market value</th>
+            <th>today's gainz (%)</th>
+            <th>today's gainz ($)</th>
+            <th>tendies (%)</th>
+            <th>tendies ($)</th>
+        </tr>
+        <tr>
+            <td>{{ holding.qty }}</td>
+            <td>${{ '{0:.2f}'.format(holding.current_price) }}</td>
+            <td>${{ '{0:.2f}'.format(holding.avg_entry_price) }}</td>
+            <td>${{ '{0:.2f}'.format(holding.cost_basis) }}</td>
+            <td>${{ '{0:.2f}'.format(holding.market_value) }}</td>
+            {% if holding.unrealized_intraday_plpc > 0 %}
+            <td><span class="bg-success">{{ '{0:.2f}'.format(holding.unrealized_intraday_plpc * 100) }}%</span></td>
+            <td><span class="bg-success">${{ '{0:.2f}'.format(holding.unrealized_intraday_pl) }}</span></td>
+            {% else %}
+            <td><span class="bg-danger">{{ '{0:.2f}'.format(holding.unrealized_intraday_plpc * 100) }}%</span></td>
+            <td><span class="bg-danger">${{ '{0:.2f}'.format(holding.unrealized_intraday_pl) }}</span></td>
+            {% endif %}
+            {% if holding.unrealized_plpc > 0 %}
+            <td><span class="bg-success">{{ '{0:.2f}'.format(holding.unrealized_plpc * 100) }}%</span></td>
+            <td><span class="bg-success">${{ '{0:.2f}'.format(holding.unrealized_pl) }}</span></td>
+            {% else %}
+            <td><span class="bg-danger">{{ '{0:.2f}'.format(holding.unrealized_plpc * 100) }}%</span></td>
+            <td><span class="bg-danger">${{ '{0:.2f}'.format(holding.unrealized_pl) }}</span></td>
+            {% endif %}
+        </tr>
+    </table>
+    <h2>Trades</h2>
+    <table class="table table-striped">
+        <tr>
+            <th>quantity</th>
+            <th>side</th>
+            <th>YOLO?</th>
+            <th>date</th>
+        </tr>
+        {% for transaction in transactions %}
+        <tr>
+            <td><a href="/transactions/{{ transaction.id }}">{{ transaction.qty }}</a></td>
+            <td>{{ transaction.side }}</td>
+            {% if transaction.side == 'buy' and transaction.qty > 10 %}
+            <td>YOLO!</td>
+            {% else %}
+            <td></td>
+            {% endif %}
+            <td>{{ moment(transaction.created_at).format('LLL') }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+        <h2>DD</h2>
+    <table class="table table-striped">
+        <tr>
+            <th>sentiment</th>
+            <th>overall sentiment</th>
+            <th>date</th>
+        </tr>
+        {% for mention in mentions %}
+        <tr>
+            {% if mention.sentiment >= 0.6 %}
+            <td>very bullish</td>
+            {% elif mention.sentiment >= 0.2 and mention.sentiment < 0.6 %}
+            <td>bullish</td>
+            {% elif mention.sentiment < 0.2 and mention.sentiment > -0.2 %}
+            <td>neutral</td>
+            {% elif mention.sentiment <= -0.2 and mention.sentiment > -0.6 %}
+            <td>bearish</td>
+            {% elif mention.sentiment <= -0.6 %}
+            <td>very bearish</td>
+            {% endif %}
+            {% if mention.avg_sentiment >= 0.6 %}
+            <td>very bullish</td>
+            {% elif mention.avg_sentiment >= 0.2 and mention.avg_sentiment < 0.6 %}
+            <td>bullish</td>
+            {% elif mention.avg_sentiment < 0.2 and mention.avg_sentiment > -0.2 %}
+            <td>neutral</td>
+            {% elif mention.avg_sentiment <= -0.2 and mention.avg_sentiment > -0.6 %}
+            <td>bearish</td>
+            {% elif mention.avg_sentiment <= -0.6 %}
+            <td>very bearish</td>
+            {% endif %}
+            <td><a href="/mentions/{{ mention.id }}">{{ moment(mention.created_at).format('LLL') }}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

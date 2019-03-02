@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>{% if transaction.side == "buy" %}
+        +
+        {% else %}
+        -
+        {% endif %}
+        
+    {{ transaction.qty }} shares of {{ transaction.symbol }}</h1>
+    <hr>
+    <table class="table table-striped">
+        <tr>
+            <th>symbol</th>
+            <th>quantity</th>
+            <th>side</th>
+            <th>YOLO?</th>
+            <th>date</th>
+            <th>status</th>
+        </tr>
+        <tr>
+            <td><a href="/holdings/{{ transaction.symbol }}">{{ transaction.symbol }}</a></td>
+            <td>{{ transaction.qty }}</td>
+            <td>{{ transaction.side }}</td>
+            {% if transaction.side == 'buy' and transaction.qty > 10 %}
+            <td>YOLO!</td>
+            {% else %}
+            <td></td>
+            {% endif %}
+            <td>{{ moment(transaction.created_at).format('LLL') }}</td>
+            <td>{{ transaction.status }}</td>
+        </tr>
+    </table>
+{% endblock %}

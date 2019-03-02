@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>Stonks</h1>
+    <h2>${{ '{0:.2f}'.format(value + account.cash) }}
+    {% if gains > 0 %}
+    <span class="bg-success">{{ '{0:.2f}'.format(gains * 100) }}%</span>
+    {% else %}
+    <span class="bg-danger">{{ '{0:.2f}'.format(gains * 100) }}%</span>
+    {% endif %}
+    </h2>
+    <h3>Cash: ${{ '{0:.2f}'.format(account.cash) }}</h2>
+    <hr>
+    <table class="table table-striped">
+        <tr>
+            <th>symbol</th>
+            <th>gainz</th>
+            <th>price</th>
+            <th>shares</th>
+            <th>market value</th>
+        {% for holding in holdings %}
+        <tr>
+            <td><a href="/holdings/{{ holding.symbol }}">{{ holding.symbol }}</a></td>
+            {% if holding.change_today > 0 %}
+            <td><span class="bg-success">{{ '{0:.2f}'.format(holding.change_today * 100) }}%</span></td>
+            {% else %}
+            <td><span class="bg-danger">{{ '{0:.2f}'.format(holding.change_today * 100) }}%</span></td>
+            {% endif %}
+            <td>${{ '{0:.2f}'.format(holding.current_price) }}</td>
+            <td>{{ holding.qty }}</td>
+            <td>${{ '{0:.2f}'.format(holding.market_value) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h2>Recent DD</h2>
+    <hr>
+    <table class="table table-striped">
+        <tr>
+            <th>symbol</th>
+            <th>sentiment</th>
+            <th>overall sentiment</th>
+            <th>r/wallstreetbets</th>
+        </tr>
+        {% for mention in mentions %}
+        <tr>
+            <td><a href="/mentions/{{ mention.id }}">{{ mention.symbol }}</a></td>
+            {% if mention.sentiment >= 0.6 %}
+            <td>very bullish</td>
+            {% elif mention.sentiment >= 0.2 and mention.sentiment < 0.6 %}
+            <td>bullish</td>
+            {% elif mention.sentiment < 0.2 and mention.sentiment > -0.2 %}
+            <td>neutral</td>
+            {% elif mention.sentiment <= -0.2 and mention.sentiment > -0.6 %}
+            <td>bearish</td>
+            {% elif mention.sentiment <= -0.6 %}
+            <td>very bearish</td>
+            {% endif %}
+            {% if mention.avg_sentiment >= 0.6 %}
+            <td>very bullish</td>
+            {% elif mention.avg_sentiment >= 0.2 and mention.avg_sentiment < 0.6 %}
+            <td>bullish</td>
+            {% elif mention.avg_sentiment < 0.2 and mention.avg_sentiment > -0.2 %}
+            <td>neutral</td>
+            {% elif mention.avg_sentiment <= -0.2 and mention.avg_sentiment > -0.6 %}
+            <td>bearish</td>
+            {% elif mention.avg_sentiment <= -0.6 %}
+            <td>very bearish</td>
+            {% endif %}
+            <td><a href="https://www.reddit.com{{  mention.comment.reddit_link }}">link</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h2>Recent Trades</h2>
+    <hr>
+    <table class="table table-striped">
+        <tr>
+            <th>symbol</th>
+            <th>quantity</th>
+            <th>side</th>
+            <th>YOLO?</th>
+            <th>status</th>
+        </tr>
+        {% for transaction in transactions %}
+        </tr>
+        <tr>
+            <td><a href="/transactions/{{ transaction.id }}">{{ transaction.symbol }}</a></td>
+            <td>{{ transaction.qty }}</td>
+            <td>{{ transaction.side }}</td>
+            {% if transaction.side == 'buy' and transaction.qty > 10 %}
+            <td>YOLO!</td>
+            {% else %}
+            <td></td>
+            {% endif %}
+            <td>{{ transaction.status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
