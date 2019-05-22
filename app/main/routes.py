@@ -1,10 +1,11 @@
-from flask import render_template
-from app import app, db
+from flask import render_template, current_app
+from app import db
 from app.models import Holding, Transaction, Mention, Comment, AlpacaAccount
 from datetime import datetime
+from app.main import bp
 
-@app.route('/')
-@app.route('/index')
+@bp.route('/')
+@bp.route('/index')
 def index():
     holdings = Holding.query.filter_by(status="open")
     account = AlpacaAccount.query.all()[0]
@@ -19,15 +20,15 @@ def index():
     
     return render_template('index.html', title='Home', holdings = holdings, mentions = recent_mentions, transactions = recent_transactions, value = portfolio_market_value, gains = todays_gainpc, account = account)
 
-@app.route('/about')
+@bp.route('/about')
 def about():
     return render_template('about.html', title='About')
 
-@app.route('/legal')
+@bp.route('/legal')
 def legal():
     return render_template('legal.html', title='Legal')
 
-@app.route('/holdings/<symbol>')
+@bp.route('/holdings/<symbol>')
 def holding(symbol):
     holding = Holding.query.filter_by(symbol=symbol).first_or_404()
     #holding = {'symbol': symbol, 'shares': 100, 'market_value' : '$1234.56'}
@@ -38,7 +39,7 @@ def holding(symbol):
     mentions = holding.mentions.all()[::-1]
     return render_template('holding.html', holding = holding, transactions = transactions, mentions = mentions)
 
-@app.route('/transactions/<id>')
+@bp.route('/transactions/<id>')
 def transaction(id):
     #holding = Holding.query.filter_by(symbol=symbol).first_or_404()
     #transaction = {'symbol': 'MSFT', 'quantity': 789, 'side' : 'buy', 'change': '-$5,432.10', type: 'market', 'created_at': datetime.utcnow(), 'time_in_force' : 'opg', 'status': 'closed', 'mention_id' : 1}
@@ -47,7 +48,7 @@ def transaction(id):
     transaction = Transaction.query.filter_by(id=id).first_or_404()
     return render_template('transaction.html', transaction = transaction)
 
-@app.route('/mentions/<id>')
+@bp.route('/mentions/<id>')
 def mention(id):
     #holding = Holding.query.filter_by(symbol=symbol).first_or_404()
     #mention = {'symbol': 'MSFT', 'sentiment': -0.563, 'avg_sentiment' : -0.921, 'created_at' : datetime.utcnow() }
